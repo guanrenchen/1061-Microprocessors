@@ -1,0 +1,26 @@
+LIST p=18f4520		
+#include<p18f4520.inc>		
+; CONFIG1H
+  CONFIG  OSC = INTIO67              ; Oscillator Selection bits (Internal oscillator block, port function on RA6 and RA7)
+; CONFIG2H
+  CONFIG  WDT = OFF             ; Watchdog Timer Enable bit (WDT disabled (control is placed on the SWDTEN bit))
+
+
+
+
+	org 	0x00		
+Initial:	
+ 		
+		
+	clrf	LATD		
+
+;***************************************
+start:
+			; Write your assembly code HERE 
+			; increase LATD
+    			; move literal to WREG     	
+			; add the value of f to WREG
+    			; add the value to WREG
+    			; clear WREG
+    
+	end

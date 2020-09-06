@@ -1,0 +1,20 @@
+LIST p=18f4520		
+#include<p18f4520.inc>		
+
+ORG     0x00 ; setting initial address
+    
+L1:	MOVLW 0x77
+	ADDWF LATD, 1
+	MOVLW 0x22
+	ADDWF LATD, 1
+L2:	MOVLB 2
+	MOVLW 0XFF
+	MOVWF 0X8C, 1
+L3:	LFSR 1, 0X28C
+LOOP:	DECFSZ INDF1, 1
+	GOTO LOOP
+L4:	MOVLW 0xE
+	SUBWF PCL
+	NOP
+	NOP
+	END

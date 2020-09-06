@@ -1,0 +1,95 @@
+LIST p=18f4520		
+#include<p18f4520.inc>
+;#include<lab4mac.asm>
+
+MOVLF	MACRO N, DATUM        ; 將立即數放置FILE REGISTER
+	MOVLW N
+	MOVWF DATUM
+	ENDM
+	
+NUMS10	MACRO			; ============================================
+	MOVLB 1		; 給定16個數字放在120~12F的位置
+	LFSR 0, 0X120
+	MOVLF D'45', POSTINC0
+	MOVLF D'32', POSTINC0
+	MOVLF D'138', POSTINC0
+	MOVLF D'181', POSTINC0
+	MOVLF D'110', POSTINC0
+	MOVLF D'247', POSTINC0
+	MOVLF D'87', POSTINC0
+	MOVLF D'43', POSTINC0
+	MOVLF D'144', POSTINC0
+	MOVLF D'5', POSTINC0
+	MOVLF D'207', POSTINC0
+	MOVLF D'229', POSTINC0
+	MOVLF D'156', POSTINC0
+	MOVLF D'97', POSTINC0
+	MOVLF D'88', POSTINC0
+	MOVLF D'1', POSTINC0
+	ENDM
+	
+RTLST	MACRO     ; ========================================================
+	LOCAL IS1, IS2, YES, NO, ENDD  ; 檢測是否為正確答案
+	MOVLB 1
+	LFSR 0, 0X120
+	LFSR 1, 0X121	
+IS1:	BTFSS FSR1L,4	    ; 注意!!沒有FSR0這個register,所以用FSR0L判斷
+	GOTO IS2
+	GOTO YES
+IS2:	MOVF POSTINC1,0
+	CPFSLT POSTINC0
+	GOTO NO
+	GOTO IS1
+NO:	MOVLF 0X45, 0X160	; // 'E'
+	MOVLF 0X52, 0X161	; // 'R'   
+	MOVLF 0X52, 0X162	; // 'R'
+	MOVLF 0X4F, 0X163	; // 'O'
+	MOVLF 0X52, 0X164	; // 'R'
+	GOTO ENDD
+YES:	MOVLF 0X43, 0X160	; // 'C'
+	MOVLF 0X4F, 0X161	; // 'O'
+	MOVLF 0X52, 0X162	; // 'R'
+	MOVLF 0X52, 0X163	; // 'R'
+	MOVLF 0X45, 0X164	; // 'E'
+	MOVLF 0X43, 0X165	; // 'C'
+	MOVLF 0X54, 0X166	; // 'T'
+ENDD:
+	ENDM
+ 
+SWAP MACRO PAR0,PAR1	; 寫一個SWAP的MACRO,parameter可0~多個
+    NOP
+    MOVFF PAR1, LATD
+    MOVFF PAR0, PAR1
+    MOVFF LATD, PAR0
+    ; // WRITE YOU SWAP CODE
+    ; // WRITE YOU SWAP CODE
+    ; // WRITE YOU SWAP CODE
+    ; // WRITE YOU SWAP CODE
+    ENDM     
+    
+ORG	0x00 ; setting initial address
+     
+INITIAL:    NUMS10	     ;// 載入16組數字至120~12F address
+	    LFSR 0,0X120    ; 設定FSR0為0x120當作i
+	    LFSR 1,0X120    ; 設定FSR1為0x120當作j    
+	    
+MAIN:	    MOVFF FSR0L, FSR1L
+	    RCALL SBRT
+	    INCF FSR0L
+	    BTFSS FSR0L, 4
+	    GOTO MAIN
+	    GOTO CHECK
+	    
+SBRT:	    MOVFF INDF1, WREG
+	    CPFSLT INDF0
+	    GOTO SW
+	    GOTO NOSW
+SW:	    SWAP INDF0, INDF1
+NOSW:	    INCF FSR1L
+	    BTFSS FSR1L, 4
+	    GOTO SBRT
+	    RETURN
+    
+CHECK:	    RTLST ; 檢查是否排序正確
+	    NOP
+	    END
